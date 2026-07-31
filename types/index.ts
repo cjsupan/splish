@@ -1,14 +1,18 @@
 // ─── User / Auth ────────────────────────────────────────────────────────────
 
-export type UserRole = 'customer' | 'owner';
+export type UserRole = "customer" | "owner";
 
 export interface Profile {
   id: string;
   role: UserRole;
-  full_name: string;
+  first_name: string;
+  last_name: string;
   phone: string;
   avatar_url: string | null;
+  onboarding_step: number;
+  onboarding_complete: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 // ─── Addresses ───────────────────────────────────────────────────────────────
@@ -16,11 +20,17 @@ export interface Profile {
 export interface Address {
   id: string;
   user_id: string;
-  label: string;           // 'Home', 'Office', etc.
+  label: string;
+  unit: string | null;
   street: string;
   barangay: string;
+  barangay_code: string;
   city: string;
+  city_code: string;
   province: string;
+  province_code: string;
+  region: string;
+  region_code: string;
   lat: number;
   lng: number;
   is_default: boolean;
@@ -28,7 +38,7 @@ export interface Address {
 
 // ─── Business ────────────────────────────────────────────────────────────────
 
-export type BusinessCategory = 'laundry' | 'water_station';
+export type BusinessCategory = "laundry" | "water_station";
 
 export interface Business {
   id: string;
@@ -39,10 +49,16 @@ export interface Business {
   phone: string;
   logo_url: string | null;
   cover_url: string | null;
+  unit: string | null;
   street: string;
   barangay: string;
+  barangay_code: string;
   city: string;
+  city_code: string;
   province: string;
+  province_code: string;
+  region: string;
+  region_code: string;
   lat: number;
   lng: number;
   is_active: boolean;
@@ -64,11 +80,11 @@ export interface BusinessFulfillment {
   est_delivery_mins: number | null;
 }
 
-export type FulfillmentType = 'pickup' | 'delivery';
+export type FulfillmentType = "pickup" | "delivery";
 
 // ─── Services ────────────────────────────────────────────────────────────────
 
-export type ServiceUnit = 'kg' | 'gallon' | 'piece' | 'load';
+export type ServiceUnit = "kg" | "gallon" | "piece" | "load";
 
 export interface Service {
   id: string;
@@ -84,14 +100,14 @@ export interface Service {
 // ─── Orders ──────────────────────────────────────────────────────────────────
 
 export type OrderStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'picked_up'
-  | 'processing'
-  | 'ready'
-  | 'out_for_delivery'
-  | 'completed'
-  | 'cancelled';
+  | "pending"
+  | "confirmed"
+  | "picked_up"
+  | "processing"
+  | "ready"
+  | "out_for_delivery"
+  | "completed"
+  | "cancelled";
 
 export interface Order {
   id: string;
@@ -128,19 +144,19 @@ export interface BusinessWithFulfillment extends Business {
 
 export interface OrderWithItems extends Order {
   items: OrderItem[];
-  business?: Pick<Business, 'id' | 'name' | 'logo_url' | 'category'>;
+  business?: Pick<Business, "id" | "name" | "logo_url" | "category">;
   delivery_address?: Address;
 }
 
 // ─── Status helpers ───────────────────────────────────────────────────────────
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {
-  pending:           'Pending',
-  confirmed:         'Confirmed',
-  picked_up:         'Picked Up',
-  processing:        'Processing',
-  ready:             'Ready',
-  out_for_delivery:  'Out for Delivery',
-  completed:         'Completed',
-  cancelled:         'Cancelled',
+  pending: "Pending",
+  confirmed: "Confirmed",
+  picked_up: "Picked Up",
+  processing: "Processing",
+  ready: "Ready",
+  out_for_delivery: "Out for Delivery",
+  completed: "Completed",
+  cancelled: "Cancelled",
 };

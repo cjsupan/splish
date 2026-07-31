@@ -29,5 +29,5 @@ export function useSession() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [setSession, setLoading, fetchProfile]);
 }

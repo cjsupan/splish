@@ -1,233 +1,123 @@
-import React, { useState } from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { useForm } from "react-hook-form";
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
-import { useFormContext, Controller } from "react-hook-form";
-import { OnboardingFormInput } from "@/features/onboarding/schema";
-import { supabase } from "@/lib/supabase";
-import Toast from "react-native-toast-message";
+  PersonalDetailsFormInput,
+  personalDetailsSchema,
+  PersonalDetailsFormData,
+} from "@/features/onboarding/schema";
+import { FormInput } from "@/components/ui/FormInput";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useOnboardingStore } from "../store/onBoardingStore";
+import { colors } from "@/constants/design/theme";
 
 interface PersonalDetailsStepProps {
   onNext: () => void;
+  onBack: () => void;
 }
 
 export default function PersonalDetailsStep({
   onNext,
+  onBack,
 }: PersonalDetailsStepProps) {
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState<string | null>(null);
+  const { personal, setPersonal, role } = useOnboardingStore();
 
   const {
     control,
-    trigger,
-    getValues,
-    formState: { errors },
-  } = useFormContext<OnboardingFormInput>();
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<PersonalDetailsFormInput, any, PersonalDetailsFormData>({
+    resolver: zodResolver(personalDetailsSchema),
+    defaultValues: {
+      first_name: personal.first_name || "",
+      last_name: personal.last_name || "",
+      phone: personal.phone || "",
+    },
+    mode: "onChange",
+  });
 
-  const handleContinue = async () => {
-    setApiError(null);
-
-    // 1. Validate fields for this step first
-    const isValid = await trigger(["first_name", "last_name", "phone_number"]);
-    if (!isValid) return;
-
-    const { first_name, last_name, phone_number } = getValues();
-
-    try {
-      setLoading(true);
-
-      // 2. Get the current authenticated user
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-
-      if (userError || !user) {
-        throw new Error("User session not found. Please log in again.");
-      }
-
-      //check if the user has already a profiles record
-      const { data: existingProfile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (existingProfile) {
-        //update the existing profile
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({
-            first_name,
-            last_name,
-            role: getValues("role"),
-            phone: phone_number,
-          })
-          .eq("id", user.id);
-      } else {
-        //insert the new profile
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: user.id,
-          first_name,
-          last_name,
-          role: getValues("role"),
-          phone: phone_number,
-        });
-
-        if (profileError) {
-          Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: profileError.message,
-          });
-          return;
-        }
-      }
-
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Details saved successfully",
-      });
-
-      // 5. Success -> Proceed to PhoneVerifyStep
-      onNext();
-    } catch (err: any) {
-      console.error("PersonalDetailsStep Error:", err);
-      setApiError(err.message || "Failed to save details and send SMS code.");
-      console.log("error: ", err);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: err.message,
-      });
-    } finally {
-      setLoading(false);
-    }
+  const handleContinue = (data: PersonalDetailsFormData) => {
+    setPersonal(data);
+    onNext();
   };
 
+  const totalSteps = role === "owner" ? 7 : 4;
+
   return (
-    <View className="flex-1 justify-between">
-      <View className="gap-5">
+    <View className="flex-1 justify-between bg-surface px-6 pb-8 pt-12">
+      <View>
+        {/* Back Button */}
+        <TouchableOpacity onPress={onBack} className="mb-6">
+          <Text className="text-base font-bold text-[#4B5E6D]">Back</Text>
+        </TouchableOpacity>
+
+        {/* Progress Indicator (Step 2) */}
+        <View className="mb-8 flex-row items-center justify-between">
+          <View className="flex-row items-center gap-2">
+            <View className="h-2 w-6 rounded-full bg-primary-dark" />
+            <View className="h-2 w-28 rounded-full bg-primary" />
+            <View className="h-2 w-4 rounded-full bg-gray-300" />
+            <View className="h-2 w-4 rounded-full bg-gray-300" />
+          </View>
+          <Text className="text-sm font-semibold text-gray-500">
+            Step 2 of {totalSteps}
+          </Text>
+        </View>
+
         {/* Header */}
-        <View>
-          <Text className="mb-2 text-2xl font-bold text-gray-900">
+        <View className="mb-8">
+          <Text className="mb-2 text-3xl font-extrabold text-[#1a2b3c]">
             Personal Details
           </Text>
-          <Text className="text-gray-500">
-            Enter your details and mobile number for verification.
+          <Text className="text-base text-gray-500">
+            Please provide your real information.
           </Text>
         </View>
 
-        {apiError && (
-          <View className="rounded-xl border border-red-200 bg-red-50 p-4">
-            <Text className="text-sm text-red-600">{apiError}</Text>
-          </View>
-        )}
-
-        {/* First Name */}
-        <View className="gap-1.5">
-          <Text className="text-sm font-semibold text-gray-700">
-            First Name
-          </Text>
-          <Controller
-            control={control}
+        <View className="space-y-4">
+          <FormInput
             name="first_name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="e.g. Juan"
-                placeholderTextColor="#9CA3AF"
-                autoCapitalize="words"
-                className={`w-full rounded-xl border bg-white px-4 py-3.5 text-base text-gray-900 ${
-                  errors.first_name ? "border-red-500" : "border-gray-200"
-                }`}
-              />
-            )}
-          />
-          {errors.first_name && (
-            <Text className="text-xs text-red-500">
-              {errors.first_name.message}
-            </Text>
-          )}
-        </View>
-
-        {/* Last Name */}
-        <View className="gap-1.5">
-          <Text className="text-sm font-semibold text-gray-700">Last Name</Text>
-          <Controller
+            label="First Name"
             control={control}
+            placeholder="Sarah"
+            placeholderTextColor={colors.textMuted || "#9ca3af"}
+            keyboardType="default"
+            autoCapitalize="words"
+            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
+          />
+
+          <FormInput
             name="last_name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="e.g. Dela Cruz"
-                placeholderTextColor="#9CA3AF"
-                autoCapitalize="words"
-                className={`w-full rounded-xl border bg-white px-4 py-3.5 text-base text-gray-900 ${
-                  errors.last_name ? "border-red-500" : "border-gray-200"
-                }`}
-              />
-            )}
-          />
-          {errors.last_name && (
-            <Text className="text-xs text-red-500">
-              {errors.last_name.message}
-            </Text>
-          )}
-        </View>
-
-        {/* Phone Number */}
-        <View className="gap-1.5">
-          <Text className="text-sm font-semibold text-gray-700">
-            Phone Number
-          </Text>
-          <Controller
+            label="Last Name"
             control={control}
-            name="phone_number"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="+63 912 345 6789"
-                placeholderTextColor="#9CA3AF"
-                keyboardType="phone-pad"
-                className={`w-full rounded-xl border bg-white px-4 py-3.5 text-base text-gray-900 ${
-                  errors.phone_number ? "border-red-500" : "border-gray-200"
-                }`}
-              />
-            )}
+            placeholder="Mercedes"
+            placeholderTextColor={colors.textMuted || "#9ca3af"}
+            keyboardType="default"
+            autoCapitalize="words"
+            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
           />
-          {errors.phone_number && (
-            <Text className="text-xs text-red-500">
-              {errors.phone_number.message}
-            </Text>
-          )}
+
+          <FormInput
+            name="phone"
+            label="Phone Number"
+            control={control}
+            placeholder="0917 555 4321"
+            placeholderTextColor={colors.textMuted || "#9ca3af"}
+            keyboardType="phone-pad"
+            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
+          />
         </View>
       </View>
 
       {/* Action Button */}
       <TouchableOpacity
-        onPress={handleContinue}
-        disabled={loading}
-        className="mt-6 flex-row items-center justify-center rounded-xl bg-primary py-4"
+        onPress={handleSubmit(handleContinue)}
+        disabled={isSubmitting}
+        className="mb-4 items-center rounded-xl bg-primary py-4"
       >
-        {loading ? (
+        {isSubmitting ? (
           <ActivityIndicator color="#FFFFFF" />
         ) : (
-          <Text className="text-base font-bold text-white">
-            Send Verification Code
-          </Text>
+          <Text className="text-lg font-bold text-white">Next</Text>
         )}
       </TouchableOpacity>
     </View>

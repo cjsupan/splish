@@ -17,7 +17,9 @@ export type Database = {
       addresses: {
         Row: {
           barangay: string
+          barangay_code: string
           city: string
+          city_code: string
           created_at: string
           id: string
           is_default: boolean
@@ -25,12 +27,18 @@ export type Database = {
           lat: number | null
           lng: number | null
           province: string
+          province_code: string
+          region: string
+          region_code: string
           street: string
+          unit: string | null
           user_id: string
         }
         Insert: {
           barangay: string
+          barangay_code: string
           city: string
+          city_code: string
           created_at?: string
           id?: string
           is_default?: boolean
@@ -38,12 +46,18 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           province: string
+          province_code: string
+          region: string
+          region_code: string
           street: string
+          unit?: string | null
           user_id: string
         }
         Update: {
           barangay?: string
+          barangay_code?: string
           city?: string
+          city_code?: string
           created_at?: string
           id?: string
           is_default?: boolean
@@ -51,7 +65,11 @@ export type Database = {
           lat?: number | null
           lng?: number | null
           province?: string
+          province_code?: string
+          region?: string
+          region_code?: string
           street?: string
+          unit?: string | null
           user_id?: string
         }
         Relationships: [
@@ -60,6 +78,68 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_addresses: {
+        Row: {
+          barangay: string
+          barangay_code: string
+          business_id: string
+          city: string
+          city_code: string
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          province: string
+          province_code: string
+          region: string
+          region_code: string
+          street: string
+          unit: string | null
+        }
+        Insert: {
+          barangay: string
+          barangay_code: string
+          business_id: string
+          city: string
+          city_code: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          province: string
+          province_code: string
+          region: string
+          region_code: string
+          street: string
+          unit?: string | null
+        }
+        Update: {
+          barangay?: string
+          barangay_code?: string
+          business_id?: string
+          city?: string
+          city_code?: string
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          province?: string
+          province_code?: string
+          region?: string
+          region_code?: string
+          street?: string
+          unit?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_addresses_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: true
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -110,61 +190,43 @@ export type Database = {
       }
       businesses: {
         Row: {
-          barangay: string
           category: string
-          city: string
           cover_url: string | null
           created_at: string
           description: string | null
           id: string
           is_active: boolean
           is_verified: boolean
-          lat: number | null
-          lng: number | null
           logo_url: string | null
           name: string
           owner_id: string
           phone: string
-          province: string
-          street: string
         }
         Insert: {
-          barangay: string
           category: string
-          city: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean
           is_verified?: boolean
-          lat?: number | null
-          lng?: number | null
           logo_url?: string | null
           name: string
           owner_id: string
           phone: string
-          province: string
-          street: string
         }
         Update: {
-          barangay?: string
           category?: string
-          city?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
           id?: string
           is_active?: boolean
           is_verified?: boolean
-          lat?: number | null
-          lng?: number | null
           logo_url?: string | null
           name?: string
           owner_id?: string
           phone?: string
-          province?: string
-          street?: string
         }
         Relationships: [
           {
@@ -292,6 +354,8 @@ export type Database = {
           first_name: string | null
           id: string
           last_name: string | null
+          onboarding_complete: boolean | null
+          onboarding_step: number | null
           phone: string
           role: string
           updated_at: string
@@ -302,6 +366,8 @@ export type Database = {
           first_name?: string | null
           id: string
           last_name?: string | null
+          onboarding_complete?: boolean | null
+          onboarding_step?: number | null
           phone?: string
           role: string
           updated_at?: string
@@ -312,6 +378,8 @@ export type Database = {
           first_name?: string | null
           id?: string
           last_name?: string | null
+          onboarding_complete?: boolean | null
+          onboarding_step?: number | null
           phone?: string
           role?: string
           updated_at?: string
@@ -367,7 +435,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      complete_onboarding: { Args: { p_payload: Json }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

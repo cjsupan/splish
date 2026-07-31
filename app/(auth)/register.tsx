@@ -12,9 +12,6 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { supabase } from "@/lib/supabase";
-import { UserRole } from "@/types";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import Logo from "@/components/shared/Logo";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "@/constants/design/theme";
