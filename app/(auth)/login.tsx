@@ -46,14 +46,9 @@ export default function LoginScreen() {
         password: data.password,
       });
 
-      router.push("/onboarding");
-      if (error) {
-        Toast.show({
-          type: "error",
-          text1: "Login failed",
-          text2: error.message,
-        });
-      }
+      if (error) throw error; // ← check before redirecting
+
+      router.replace("/");
     } catch (error: any) {
       Toast.show({
         type: "error",

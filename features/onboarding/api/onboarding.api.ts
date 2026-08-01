@@ -1,7 +1,6 @@
-import { supabase } from "@/lib/supabase"; // Adjust to your project's Supabase client import
+import { supabase } from "@/lib/supabase";
 
 export async function submitCompleteOnboarding(payload: any) {
-  // Call the Postgres function named 'complete_onboarding'
   const { data, error } = await supabase.rpc("complete_onboarding", {
     p_payload: payload,
   });

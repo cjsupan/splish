@@ -4,7 +4,9 @@ import { useAuthStore } from "@/store/authStore";
 
 export default function Index() {
   const { session, profile, loading } = useAuthStore();
-
+  console.log("session: ", session);
+  console.log("profile: ", profile);
+  console.log("loading: ", loading);
   if (loading) {
     return (
       <View
@@ -32,5 +34,5 @@ export default function Index() {
     return <Redirect href="/(owner)" />;
   }
 
-  return <Redirect href="/(customer)" />;
+  return <Redirect href="/(customer)/(home)" />;
 }

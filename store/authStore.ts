@@ -33,36 +33,20 @@ export const useAuthStore = create<AuthState>((set) => ({
         .from("profiles")
         .select("*")
         .eq("id", userId)
-        .single();
+        .maybeSingle(); // ← was .single()
 
-      if (error) {
-        throw error;
-      }
-
-      set({
-        profile: data as Profile,
-      });
+      if (error) throw error;
+      set({ profile: data as Profile | null });
     } catch (error) {
       console.error("Error fetching profile:", error);
-
-      set({
-        profile: null,
-      });
+      set({ profile: null });
     }
   },
 
   signOut: async () => {
     await supabase.auth.signOut();
-
-    set({
-      session: null,
-      profile: null,
-    });
+    set({ session: null, profile: null, loading: false });
   },
 
-  reset: () =>
-    set({
-      session: null,
-      profile: null,
-    }),
+  reset: () => set({ session: null, profile: null, loading: false }),
 }));

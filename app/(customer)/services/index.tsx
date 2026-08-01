@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 
-export default function ExploreScreen() {
+export default function Screen() {
   return (
     <View
       style={{
@@ -10,7 +10,7 @@ export default function ExploreScreen() {
         backgroundColor: "#fff",
       }}
     >
-      <Text>Explore Screen</Text>
+      <Text>Coming Soon</Text>
     </View>
   );
 }

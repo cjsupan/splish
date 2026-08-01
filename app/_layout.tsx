@@ -24,8 +24,6 @@ import {
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "@/global.css";
-import { supabase } from "@/lib/supabase";
-import { useAuthStore } from "@/store/authStore";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "../components/ui/Toast";
