@@ -49,7 +49,7 @@ export default function CustomerLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="orders"
         options={{
           tabBarIcon: ({ focused }) => (
@@ -64,7 +64,7 @@ export default function CustomerLayout() {
             <TabIcon emoji="👤" label="Profile" focused={focused} />
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

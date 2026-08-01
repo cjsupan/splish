@@ -27,7 +27,7 @@ module.exports = {
         "body-medium": [tokens.fontFamily.bodyMedium],
         "body-semibold": [tokens.fontFamily.bodySemibold],
         "body-bold": [tokens.fontFamily.bodyBold],
-        "body-extrabold": [tokens.fontFamily.bodyExtraBold],
+        "body-extrabold": [tokens.fontFamily.bodyExtrabold],
 
         inter: [tokens.fontFamily.inter],
         "inter-medium": [tokens.fontFamily.interMedium],

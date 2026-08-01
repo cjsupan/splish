@@ -1,73 +1,111 @@
-import { Tabs } from "expo-router";
-import { View, Text } from "react-native";
-import { Colors } from "@/constants/design/theme";
-
-function TabIcon({
-  emoji,
-  label,
-  focused,
-}: {
-  emoji: string;
-  label: string;
-  focused: boolean;
-}) {
-  return (
-    <View className='items-center gap-0.5 pt-1'>
-      <Text className='text-xl'>{emoji}</Text>
-      <Text
-        className={`text-[10px] font-medium ${focused ? "text-primary-500" : "text-ink-disabled"}`}
-      >
-        {label}
-      </Text>
-    </View>
-  );
-}
+import { Redirect, Tabs } from "expo-router";
+import Ionicons from "@react-native-vector-icons/ionicons";
+import { colors } from "@/constants/design/theme";
+import { useAuthStore } from "@/store/authStore";
+import { View, ActivityIndicator } from "react-native";
 
 export default function OwnerLayout() {
+  const { session, profile, loading } = useAuthStore();
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  if (!session) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  if (!profile || !profile.onboarding_complete) {
+    return <Redirect href="/(auth)/onboarding" />;
+  }
+
+  if (profile.role !== "owner") {
+    return <Redirect href="/" />;
+  }
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: Colors.surface,
-          borderTopColor: Colors.border.DEFAULT,
-          height: 72,
+          backgroundColor: colors.primaryTint,
+          borderTopColor: colors.border,
+          borderTopWidth: 0.5,
+          height: 70,
           paddingBottom: 8,
+          paddingTop: 6,
         },
-        tabBarActiveTintColor: Colors.primary[500],
-        tabBarInactiveTintColor: Colors.ink.disabled,
+        tabBarLabelStyle: {
+          fontFamily: "Geist",
+          fontSize: 10,
+        },
       }}
     >
       <Tabs.Screen
-        name='index'
+        name="(home)"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji='📊' label='Dashboard' focused={focused} />
+          title: "Home",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tabs.Screen
-        name='orders'
+        name="(orders)"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji='📋' label='Orders' focused={focused} />
+          title: "Orders",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? "clipboard" : "clipboard-outline"}
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tabs.Screen
-        name='shop'
+        name="(business)"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji='🏪' label='My Shop' focused={focused} />
+          title: "Business",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? "storefront" : "storefront-outline"}
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
+
       <Tabs.Screen
-        name='profile'
+        name="(profile)"
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji='👤' label='Profile' focused={focused} />
+          title: "Profile",
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={size}
+              color={color}
+            />
           ),
         }}
       />

@@ -26,7 +26,7 @@ import { FormInput } from "@/components/ui/FormInput";
 
 export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
 
   const {
     control,

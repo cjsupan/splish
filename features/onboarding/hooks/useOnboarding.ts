@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useOnboardingStore } from "../store/onBoardingStore";
 import { submitCompleteOnboarding } from "../api/onboarding.api";
+import { useAuthStore } from "@/store/authStore";
 
 export function useOnboarding() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const resetStore = useOnboardingStore((state) => state.resetStore);
+  const { fetchProfile, session } = useAuthStore();
 
   const submitOnboarding = async () => {
     setIsSubmitting(true);
@@ -54,6 +56,9 @@ export function useOnboarding() {
 
       // 3. Send everything in one request to your API
       await submitCompleteOnboarding(payload);
+
+      // fetch profile from supabase
+      await fetchProfile(session?.user?.id!);
 
       // 4. Clear the temporary onboarding store data upon success
       resetStore();

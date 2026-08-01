@@ -10,8 +10,8 @@ export default function AuthLayout() {
     >
       <Stack.Screen name="login" />
       <Stack.Screen name="register" />
-      <Stack.Screen name="onboarding-customer" />
-      <Stack.Screen name="onboarding-owner" />
+      {/* <Stack.Screen name="onboarding-customer" />
+      <Stack.Screen name="onboarding-owner" /> */}
     </Stack>
   );
 }

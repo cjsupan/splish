@@ -7,6 +7,7 @@ export async function submitCompleteOnboarding(payload: any) {
   });
 
   if (error) {
+    console.log("Error in complete_onboarding", error);
     throw new Error(error.message || "Failed to complete onboarding");
   }
 

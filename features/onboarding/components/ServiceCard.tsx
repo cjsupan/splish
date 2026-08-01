@@ -18,7 +18,7 @@ export function ServiceCard({
 }: ServiceCardProps) {
   return (
     <View
-      className="flex-row overflow-hidden rounded-xl border border-primary-dark bg-white shadow-sm"
+      className="flex-row overflow-hidden rounded-lg border border-primary-dark bg-white shadow-sm"
       style={{ elevation: 1 }}
     >
       {/* Left accent stripe */}

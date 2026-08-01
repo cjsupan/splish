@@ -30,6 +30,7 @@
       "expo-font",
       "@react-native-vector-icons/fontawesome6",
       "@react-native-vector-icons/ionicons",
+      "@react-native-vector-icons/lucide",
       [
         "expo-image-picker",
         {

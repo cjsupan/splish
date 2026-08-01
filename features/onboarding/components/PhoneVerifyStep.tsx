@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Toast from "react-native-toast-message";
 import { useOnboardingStore } from "../store/onBoardingStore";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface PhoneVerifyStepProps {
   onNext: () => void;
@@ -105,23 +106,29 @@ export default function PhoneVerifyStep({
   const totalSteps = role === "owner" ? 7 : 4;
 
   return (
-    <View className="flex-1 justify-between bg-surface px-6 pb-8 pt-12">
-      <View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-surface">
+      <View className="flex-1 gap-8 px-6 pb-4">
         {/* Back Button */}
-        <TouchableOpacity onPress={onBack} className="mb-6">
-          <Text className="text-base font-bold text-[#4B5E6D]">Back</Text>
-        </TouchableOpacity>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity onPress={onBack}>
+            <Text className="font-display-medium text-base text-primary-dark">
+              Back
+            </Text>
+          </TouchableOpacity>
 
-        {/* Progress Indicator (Step 2) */}
-        <View className="mb-8 flex-row items-center justify-between">
+          {/* Progress Indicator (Step 2) */}
+
           <View className="flex-row items-center gap-2">
+            <View className="h-2 w-2 rounded-full bg-primary-dark" />
             <View className="h-2 w-4 rounded-full bg-primary-dark" />
-            <View className="h-2 w-6 rounded-full bg-primary-dark" />
-            <View className="h-2 w-28 rounded-full bg-primary" />
+            <View className="h-2 w-12 rounded-full bg-primary" />
             <View className="h-2 w-4 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
           </View>
-          <Text className="text-sm font-semibold text-gray-500">
-            Step 3 of {totalSteps}
+          <Text className="font-body-semibold text-sm text-gray-500">
+            Step 3/{totalSteps}
           </Text>
         </View>
 
@@ -136,8 +143,11 @@ export default function PhoneVerifyStep({
         </View>
 
         {/* OTP Input Container */}
-        <Pressable onPress={focusInput} className="mb-6 h-16 justify-center">
-          <View className="flex-row justify-between">
+        <Pressable
+          onPress={focusInput}
+          className="mb-6 h-16 items-center justify-center"
+        >
+          <View className="flex-row items-center gap-4">
             {/* Generate 6 boxes */}
             {[0, 1, 2, 3, 4, 5].map((index) => {
               const digit = token[index] || "";
@@ -147,7 +157,7 @@ export default function PhoneVerifyStep({
               return (
                 <View
                   key={index}
-                  className={`h-14 w-12 items-center justify-center rounded-xl border bg-white ${
+                  className={`h-16 w-14 items-center justify-center rounded-lg border bg-white ${
                     isCurrent ? "border-2 border-primary" : "border-gray-200"
                   }`}
                 >
@@ -192,20 +202,20 @@ export default function PhoneVerifyStep({
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
 
-      {/* Bottom Button */}
-      <TouchableOpacity
-        onPress={handleVerify}
-        disabled={loading}
-        className="mb-4 items-center rounded-xl bg-primary py-4"
-      >
-        {loading ? (
-          <ActivityIndicator color="#FFFFFF" />
-        ) : (
-          <Text className="text-lg font-bold text-white">Verify</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+        {/* Bottom Button */}
+        <TouchableOpacity
+          onPress={handleVerify}
+          disabled={loading}
+          className="mb-4 items-center rounded-xl bg-primary py-4"
+        >
+          {loading ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text className="text-lg font-bold text-white">Verify</Text>
+          )}
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }

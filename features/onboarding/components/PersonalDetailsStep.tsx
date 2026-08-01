@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import {
   PersonalDetailsFormInput,
@@ -9,6 +15,7 @@ import { FormInput } from "@/components/ui/FormInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useOnboardingStore } from "../store/onBoardingStore";
 import { colors } from "@/constants/design/theme";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface PersonalDetailsStepProps {
   onNext: () => void;
@@ -43,83 +50,98 @@ export default function PersonalDetailsStep({
   const totalSteps = role === "owner" ? 7 : 4;
 
   return (
-    <View className="flex-1 justify-between bg-surface px-6 pb-8 pt-12">
-      <View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-surface">
+      <View className="flex-1 gap-8 px-6 pb-4">
         {/* Back Button */}
-        <TouchableOpacity onPress={onBack} className="mb-6">
-          <Text className="text-base font-bold text-[#4B5E6D]">Back</Text>
-        </TouchableOpacity>
+        <View className="flex-row items-center justify-between">
+          <TouchableOpacity onPress={onBack}>
+            <Text className="font-display-medium text-base text-primary-dark">
+              Back
+            </Text>
+          </TouchableOpacity>
 
-        {/* Progress Indicator (Step 2) */}
-        <View className="mb-8 flex-row items-center justify-between">
+          {/* Progress Indicator (Step 2) */}
+
           <View className="flex-row items-center gap-2">
-            <View className="h-2 w-6 rounded-full bg-primary-dark" />
-            <View className="h-2 w-28 rounded-full bg-primary" />
+            <View className="h-2 w-4 rounded-full bg-primary-dark" />
+            <View className="h-2 w-12 rounded-full bg-primary" />
             <View className="h-2 w-4 rounded-full bg-gray-300" />
-            <View className="h-2 w-4 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-gray-300" />
           </View>
-          <Text className="text-sm font-semibold text-gray-500">
-            Step 2 of {totalSteps}
+          <Text className="font-body-semibold text-sm text-gray-500">
+            Step 2/{totalSteps}
           </Text>
         </View>
 
-        {/* Header */}
-        <View className="mb-8">
-          <Text className="mb-2 text-3xl font-extrabold text-[#1a2b3c]">
-            Personal Details
-          </Text>
-          <Text className="text-base text-gray-500">
-            Please provide your real information.
-          </Text>
-        </View>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{
+            paddingBottom: 24,
+          }}
+        >
+          {/* Header */}
+          <View className="mb-8">
+            <Text className="font-display-extrabold text-3xl text-text-primary">
+              Personal Details
+            </Text>
+            <Text className="font-body-medium text-base text-gray-500">
+              Please provide your real information.
+            </Text>
+          </View>
 
-        <View className="space-y-4">
-          <FormInput
-            name="first_name"
-            label="First Name"
-            control={control}
-            placeholder="Sarah"
-            placeholderTextColor={colors.textMuted || "#9ca3af"}
-            keyboardType="default"
-            autoCapitalize="words"
-            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
-          />
+          <View className="space-y-4">
+            <FormInput
+              name="first_name"
+              label="First Name"
+              control={control}
+              placeholder="Sarah"
+              placeholderTextColor={colors.textMuted || "#9ca3af"}
+              keyboardType="default"
+              autoCapitalize="words"
+              inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
+            />
 
-          <FormInput
-            name="last_name"
-            label="Last Name"
-            control={control}
-            placeholder="Mercedes"
-            placeholderTextColor={colors.textMuted || "#9ca3af"}
-            keyboardType="default"
-            autoCapitalize="words"
-            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
-          />
+            <FormInput
+              name="last_name"
+              label="Last Name"
+              control={control}
+              placeholder="Mercedes"
+              placeholderTextColor={colors.textMuted || "#9ca3af"}
+              keyboardType="default"
+              autoCapitalize="words"
+              inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
+            />
 
-          <FormInput
-            name="phone"
-            label="Phone Number"
-            control={control}
-            placeholder="0917 555 4321"
-            placeholderTextColor={colors.textMuted || "#9ca3af"}
-            keyboardType="phone-pad"
-            inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
-          />
-        </View>
+            <FormInput
+              name="phone"
+              label="Phone Number"
+              control={control}
+              placeholder="0917 555 4321"
+              placeholderTextColor={colors.textMuted || "#9ca3af"}
+              keyboardType="phone-pad"
+              inputWrapperClassName="bg-white border border-gray-200 rounded-xl"
+            />
+          </View>
+        </ScrollView>
+
+        {/* Action Button */}
+        <TouchableOpacity
+          onPress={handleSubmit(handleContinue)}
+          disabled={isSubmitting}
+          className="mb-4 items-center rounded-xl bg-primary py-4"
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text className="text-lg font-bold text-white">Next</Text>
+          )}
+        </TouchableOpacity>
       </View>
-
-      {/* Action Button */}
-      <TouchableOpacity
-        onPress={handleSubmit(handleContinue)}
-        disabled={isSubmitting}
-        className="mb-4 items-center rounded-xl bg-primary py-4"
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#FFFFFF" />
-        ) : (
-          <Text className="text-lg font-bold text-white">Next</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }

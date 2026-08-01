@@ -27,7 +27,7 @@ export const tokens = {
     },
 
     border: {
-      DEFAULT: "#E2E8F0",
+      DEFAULT: "#CBD5E1",
       light: "#EDF2F7",
     },
 
@@ -94,6 +94,7 @@ export const tokens = {
     bodyMedium: "PlusJakartaSans_500Medium",
     bodySemibold: "PlusJakartaSans_600SemiBold",
     bodyBold: "PlusJakartaSans_700Bold",
+    bodyExtrabold: "PlusJakartaSans_800ExtraBold",
 
     mono: "SpaceMono_400Regular",
     monoBold: "SpaceMono_700Bold",
