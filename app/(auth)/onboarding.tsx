@@ -19,7 +19,6 @@ export default function OnboardingScreen() {
   const { submitOnboarding, isSubmitting } = useOnboarding();
 
   const handleNext = async () => {
-    console.log("continuing");
     if (step === 4 && role === "customer") {
       try {
         await submitOnboarding();

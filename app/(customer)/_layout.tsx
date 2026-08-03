@@ -6,9 +6,6 @@ import { View, ActivityIndicator } from "react-native";
 
 export default function CustomerLayout() {
   const { session, profile, loading } = useAuthStore();
-  console.log("session: ", session);
-  console.log("profile: ", profile);
-  console.log("loading: ", loading);
   if (loading) {
     return (
       <View

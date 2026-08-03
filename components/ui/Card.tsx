@@ -1,15 +1,16 @@
-import { View, ViewProps } from 'react-native';
+import { ReactNode } from "react";
+import { View, ViewProps } from "react-native";
 
 interface CardProps extends ViewProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }
 
-export function Card({ children, className = '', ...props }: CardProps) {
+export function Card({ children, className = "", ...props }: CardProps) {
   return (
     <View
+      className={`rounded-lg border border-border bg-surface shadow-sm shadow-border ${className}`}
       {...props}
-      className={`bg-surface border border-border rounded-2xl p-4 ${className}`}
     >
       {children}
     </View>

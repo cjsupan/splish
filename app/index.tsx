@@ -4,9 +4,7 @@ import { useAuthStore } from "@/store/authStore";
 
 export default function Index() {
   const { session, profile, loading } = useAuthStore();
-  console.log("session: ", session);
-  console.log("profile: ", profile);
-  console.log("loading: ", loading);
+
   if (loading) {
     return (
       <View

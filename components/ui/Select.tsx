@@ -30,6 +30,7 @@ interface SelectProps<T> {
   disabled?: boolean;
   loading?: boolean;
   className?: string;
+  variant?: "default" | "ghost";
 }
 
 export function Select<T extends string | number>({
@@ -44,11 +45,13 @@ export function Select<T extends string | number>({
   disabled = false,
   loading = false,
   className = "mb-4",
+  variant = "default",
 }: SelectProps<T>) {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState("");
 
   const selected = options.find((o) => o.value === value);
+  const isGhost = variant === "ghost";
 
   const filtered =
     searchable && search.trim()
@@ -65,7 +68,7 @@ export function Select<T extends string | number>({
 
   return (
     <View className={className}>
-      {label && (
+      {label && !isGhost && (
         <Text
           className="mb-1 text-sm text-text-primary"
           style={{ fontFamily: "DMSansBold" }}
@@ -75,9 +78,13 @@ export function Select<T extends string | number>({
       )}
 
       <TouchableOpacity
-        className={`flex-row items-center justify-between rounded-lg border bg-surface px-4 py-3.5 ${
-          error ? "border-danger" : "border-border"
-        } ${disabled ? "bg-text-muted/10" : ""}`}
+        className={
+          isGhost
+            ? `flex-row items-center gap-1 ${disabled ? "opacity-50" : ""}`
+            : `flex-row items-center justify-between rounded-lg border bg-surface px-4 py-3.5 ${
+                error ? "border-danger" : "border-border"
+              } ${disabled ? "bg-text-muted/10" : ""}`
+        }
         onPress={() => !disabled && !loading && setVisible(true)}
         activeOpacity={0.7}
       >
@@ -87,25 +94,29 @@ export function Select<T extends string | number>({
           <>
             <Text
               className={
-                selected
-                  ? "flex-1 text-base text-text-primary"
-                  : "flex-1 text-base text-text-muted"
+                isGhost
+                  ? "flex-shrink text-base text-slate-800" // Ghost typography
+                  : selected
+                    ? "flex-1 text-base text-text-primary" // Default typography
+                    : "flex-1 text-base text-text-muted"
               }
-              style={{ fontFamily: "DMSans" }}
+              style={{
+                fontFamily: isGhost || selected ? "DMSansBold" : "DMSans",
+              }}
               numberOfLines={1}
             >
               {selected ? selected.label : placeholder}
             </Text>
             <Ionicons
               name="chevron-down-outline"
-              size={18}
-              color={colors.textMuted}
+              size={isGhost ? 16 : 18}
+              color={isGhost ? colors.textPrimary : colors.primary}
             />
           </>
         )}
       </TouchableOpacity>
 
-      {error && (
+      {error && !isGhost && (
         <Text
           className="mt-1 text-xs text-danger"
           style={{ fontFamily: "DMSans" }}

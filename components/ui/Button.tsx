@@ -1,79 +1,84 @@
-import { Pressable, Text, ActivityIndicator, PressableProps } from 'react-native';
+import { ReactNode } from "react";
+import {
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 
-interface ButtonProps extends Omit<PressableProps, 'style'> {
-  label:    string;
-  variant?: Variant;
+type ButtonSize = "sm" | "md" | "lg";
+
+interface ButtonProps extends TouchableOpacityProps {
+  children: ReactNode;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   loading?: boolean;
-  size?:    'sm' | 'md' | 'lg';
-  fullWidth?: boolean;
+  className?: string;
+  textClassName?: string;
 }
 
-const CONTAINER: Record<Variant, string> = {
-  primary:   'bg-primary-500 active:bg-primary-600',
-  secondary: 'bg-surface border-2 border-primary-500 active:bg-primary-50',
-  ghost:     'bg-transparent active:bg-muted',
-  danger:    'bg-error active:bg-red-700',
+const variantClasses: Record<ButtonVariant, string> = {
+  primary: "bg-primary",
+  secondary: "bg-primary-dark",
+  outline: "border border-primary bg-transparent",
+  ghost: "bg-transparent",
 };
 
-const LABEL: Record<Variant, string> = {
-  primary:   'text-white',
-  secondary: 'text-primary-500',
-  ghost:     'text-ink',
-  danger:    'text-white',
+const textVariantClasses: Record<ButtonVariant, string> = {
+  primary: "text-white",
+  secondary: "text-white",
+  outline: "text-primary",
+  ghost: "text-primary",
 };
 
-const SIZE_CONTAINER: Record<string, string> = {
-  sm: 'py-2.5 px-4 rounded-xl',
-  md: 'py-3.5 px-6 rounded-2xl',
-  lg: 'py-4 px-8 rounded-2xl',
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: "px-4 py-2",
+  md: "px-5 py-3",
+  lg: "px-6 py-4",
 };
 
-const SIZE_TEXT: Record<string, string> = {
-  sm: 'text-sm',
-  md: 'text-base',
-  lg: 'text-lg',
+const textSizeClasses: Record<ButtonSize, string> = {
+  sm: "text-sm",
+  md: "text-base",
+  lg: "text-lg",
 };
 
 export function Button({
-  label,
-  variant    = 'primary',
-  loading    = false,
-  size       = 'md',
-  fullWidth  = true,
+  children,
+  variant = "primary",
+  size = "md",
+  loading = false,
   disabled,
-  ...rest
+  className = "",
+  textClassName = "",
+  ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
 
   return (
-    <Pressable
-      {...rest}
+    <TouchableOpacity
+      activeOpacity={0.8}
       disabled={isDisabled}
-      className={[
-        'flex-row items-center justify-center gap-2',
-        CONTAINER[variant],
-        SIZE_CONTAINER[size],
-        fullWidth ? 'w-full' : 'self-start',
-        isDisabled ? 'opacity-50' : '',
-      ].join(' ')}
+      className={`items-center justify-center rounded-md ${
+        variantClasses[variant]
+      } ${sizeClasses[size]} ${isDisabled ? "opacity-50" : ""} ${className}`}
+      {...props}
     >
-      {loading && (
+      {loading ? (
         <ActivityIndicator
-          size="small"
-          color={variant === 'primary' || variant === 'danger' ? '#fff' : '#0EA5DC'}
+          color={
+            variant === "outline" || variant === "ghost" ? undefined : "#FFFFFF"
+          }
         />
+      ) : (
+        <Text
+          className={`font-body-bold ${textVariantClasses[variant]} ${textSizeClasses[size]} ${textClassName}`}
+        >
+          {children}
+        </Text>
       )}
-      <Text
-        className={[
-          'font-semibold text-center',
-          LABEL[variant],
-          SIZE_TEXT[size],
-        ].join(' ')}
-      >
-        {label}
-      </Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 }

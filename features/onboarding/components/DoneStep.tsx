@@ -21,7 +21,6 @@ export default function DoneStep() {
   };
 
   const navigateToNext = () => {
-    console.log("done", profile?.role, "session: ", session?.user?.role);
     if (profile?.role === "customer") {
       router.replace("/(customer)");
     } else if (profile?.role === "owner") {
